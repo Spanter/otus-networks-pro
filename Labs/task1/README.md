@@ -142,7 +142,7 @@ ip default-gateway 192.168.3.1
 ```
 
 #### Назначение портов:
-НА S1
+На S1
 ```bash
 interface range eth0/1 - 3, eth1/2 - 3, eth2/0 - 3, eth3/0 - 3, eth4/0 - 3, eth5/0 - 3
  switchport mode access
@@ -178,7 +178,7 @@ interface eth0/0
  switchport trunk native vlan 8
  switchport trunk allowed vlan 3,4,8
 
-interface f1/5
+interface eth1/0
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 8
@@ -186,7 +186,7 @@ interface f1/5
 ```
 ### На S2:
 ```bash
-interface f0/0
+interface eth0/0
  switchport trunk encapsulation dot1q
  switchport mode trunk
  switchport trunk native vlan 8
