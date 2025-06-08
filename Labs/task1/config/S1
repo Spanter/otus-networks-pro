@@ -1,0 +1,206 @@
+Building configuration...
+
+Current configuration : 3390 bytes
+!
+version 15.1
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname S1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 4 06YFDUHH61wAE/kLkDq9BGho1QM5EnRtoyr8cHAUg.2
+!
+no aaa new-model
+!
+ip cef
+!
+!
+no ip domain-lookup
+no ipv6 cef
+ipv6 multicast rpf use-bgp
+!
+!
+!
+!
+!
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+!
+!
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Ethernet0/0
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 8
+ switchport trunk allowed vlan 3,4,8
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet0/1
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet0/2
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet0/3
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet1/0
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 8
+ switchport trunk allowed vlan 3,4,8
+ switchport mode trunk
+ duplex auto
+!
+interface Ethernet1/1
+ switchport access vlan 3
+ switchport mode access
+ duplex auto
+!
+interface Ethernet1/2
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet1/3
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet2/0
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet2/1
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet2/2
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet2/3
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet3/0
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet3/1
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet3/2
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet3/3
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet4/0
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet4/1
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet4/2
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet4/3
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet5/0
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet5/1
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet5/2
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Ethernet5/3
+ switchport access vlan 7
+ switchport mode access
+ duplex auto
+!
+interface Vlan3
+ description Management
+ ip address 192.168.3.11 255.255.255.0
+!
+ip default-gateway 192.168.3.1
+!
+no ip http server
+!
+!
+!
+!
+!
+control-plane
+!
+banner motd ^C
+*********************************************************************
+***                                                               ***
+*** Attention! Unauthorized access to the equipment is forbidden! ***
+***                                                               ***
+*********************************************************************
+^C
+!
+line con 0
+ password 7 110A1016141D
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 060506324F41
+ login
+!
+end
