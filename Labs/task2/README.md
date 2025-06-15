@@ -84,12 +84,15 @@ interface  range Ethernet0/1, Ethernet0/3
 show spanning-tree
 ```
 На коммутаторе S1:
+
 ![На изображении результат вывода stp S1](/Labs/task2/pictures/2.4-S1-sh_stp.PNG)
 
 На коммутаторе S2:
+
 ![На изображении результат вывода stp S2](/Labs/task2/pictures/2.4-S2-sh_stp.PNG)
 
 На коммутаторе S3:
+
 ![На изображении результат вывода stp S3](/Labs/task2/pictures/2.4-S3-sh_stp.PNG)
 
 ### Результаты:
@@ -124,9 +127,11 @@ interface Ethernet0/3
 ### Результат изменения cost:
 
 На S2:
+
 ![На изображении результат вывода stp S2](/Labs/task2/pictures/3.3-S2-sh_stp.PNG)
 
 На S3:
+
 ![На изображении результат вывода stp S3](/Labs/task2/pictures/3.3-S3-sh_stp.PNG)
 
 ### Объяснение:
@@ -144,7 +149,6 @@ interface range Ehternet0/0, Ehternet0/2
 
 ### Наблюдение за процессом выбора протоколом STP порта, исходя из приоритета портов:
 
-- На некорневых коммутаторах (S2, S3) Root Port стал порт с **меньшим номером**, потому что при равной стоимости, STP сравнивает Port ID.
 ![На изображении результат вывода stp S2](/Labs/task2/pictures/4.0-S2-sh_stp.PNG)
 
 ![На изображении результат вывода stp S3](/Labs/task2/pictures/4.0-S3-sh_stp.PNG)
@@ -152,6 +156,8 @@ interface range Ehternet0/0, Ehternet0/2
 ### Вывод:
 - **Root Port на S2**: Ethernet0/0
 - **Root Port на S3**: Ethernet0/2
+
+На некорневых коммутаторах (S2, S3) Root Port стал порт с **меньшим номером**, потому что при равной стоимости, STP сравнивает Port ID.
 
 ---
 
