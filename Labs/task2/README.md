@@ -111,7 +111,7 @@ show spanning-tree
 - Ethernet0/3 → Designated / FWD
 
 #### На S3:
-- Ethernet0/1 → Alternate / FWD
+- Ethernet0/1 → Alternate / BLK
 - Ethernet0/3 → Root / FWD
 
 ---
