@@ -1,0 +1,128 @@
+Building configuration...
+[OK]
+R14#sh run
+Building configuration...
+
+Current configuration : 1639 bytes
+!
+! Last configuration change at 00:12:41 UTC Thu Aug 7 2025
+! NVRAM config last updated at 00:13:38 UTC Thu Aug 7 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R14
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$MNWo$xy8RQxb8LcWCPLmfApBgB.
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.14 255.255.255.255
+!
+interface Ethernet0/0
+ description R14-to-R12
+ ip address 172.20.10.5 255.255.255.252
+!
+interface Ethernet0/1
+ description R14-to-R13
+ ip address 172.20.10.9 255.255.255.252
+!
+interface Ethernet0/2
+ description R14-to-R22
+ ip address 10.10.1.1 255.255.255.252
+!
+interface Ethernet0/3
+ description R14-to-R19
+ ip address 172.20.10.1 255.255.255.252
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 02050D480809
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 110A1016141D
+ login
+ transport input none
+!
+!
+end

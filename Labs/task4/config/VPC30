@@ -1,0 +1,4 @@
+set pcname VPC30
+
+ip dhcp
+DORA IP 192.168.30.2/24 GW 192.168.30.1

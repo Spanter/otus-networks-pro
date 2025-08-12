@@ -1,0 +1,141 @@
+Building configuration...
+
+Current configuration : 1837 bytes
+!
+! Last configuration change at 22:07:29 UTC Wed Aug 6 2025
+! NVRAM config last updated at 22:07:38 UTC Wed Aug 6 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R26
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$jEg8$Q66cO0jkqvK2ykyMNzvpk/
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.26 255.255.255.255
+!
+interface Ethernet0/0
+ description R26-to-R24
+ ip address 172.20.12.10 255.255.255.252
+!
+interface Ethernet0/1
+ description R26-to-R28
+ ip address 10.10.1.33 255.255.255.252
+!
+interface Ethernet0/2
+ description R26-to-R25
+ ip address 172.20.12.14 255.255.255.252
+!
+interface Ethernet0/3
+ description R26-to-R18
+ ip address 10.10.1.14 255.255.255.252
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 060506324F41
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 030752180500
+ login
+ transport input none
+!
+!
+end

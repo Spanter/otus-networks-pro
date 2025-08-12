@@ -1,0 +1,148 @@
+Building configuration...
+
+Current configuration : 2674 bytes
+!
+! Last configuration change at 23:30:24 UTC Sun Aug 10 2025
+! NVRAM config last updated at 23:31:33 UTC Sun Aug 10 2025
+!
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+service compress-config
+!
+hostname SW9
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$dHMl$HaI16KZZTexKaW2lFADzW1
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+no ip domain-lookup
+ip cef
+no ipv6 cef
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.1.9 255.255.255.255
+!
+interface Port-channel1
+ switchport trunk allowed vlan 80,100,199
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ spanning-tree link-type point-to-point
+!
+interface Ethernet0/0
+ description SW9-to-SW10
+ switchport trunk allowed vlan 80,100,199
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface Ethernet0/1
+ description SW9-to-SW10
+ switchport trunk allowed vlan 80,100,199
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface Ethernet0/2
+ switchport access vlan 80
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface Ethernet0/3
+ description SW-to-R17
+ switchport trunk allowed vlan 80,100,199
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ spanning-tree link-type point-to-point
+!
+interface Ethernet1/0
+ description SW9-to-R16 (backup)
+ switchport trunk allowed vlan 80,100,199
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ spanning-tree link-type point-to-point
+!
+interface Ethernet1/1
+ switchport access vlan 999
+ switchport mode access
+!
+interface Ethernet1/2
+ switchport access vlan 999
+ switchport mode access
+!
+interface Ethernet1/3
+ switchport access vlan 999
+ switchport mode access
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan199
+ description Management
+ ip address 192.168.199.4 255.255.255.0
+!
+ip default-gateway 192.168.199.1
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+!
+!
+control-plane
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 094F471A1A0A
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 045802150C2E
+ login
+!
+!
+end

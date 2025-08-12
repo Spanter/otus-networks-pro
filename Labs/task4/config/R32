@@ -1,0 +1,125 @@
+Building configuration...
+
+Current configuration : 1527 bytes
+!
+! Last configuration change at 23:15:57 UTC Sun Aug 10 2025
+! NVRAM config last updated at 23:16:05 UTC Sun Aug 10 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R32
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$lSC.$/J72IuAQSPd3HjpCktK8f1
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.32 255.255.255.255
+!
+interface Ethernet0/0
+ description R32-to-R16
+ ip address 172.20.11.10 255.255.255.252
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 0822455D0A16
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 1511021F0725
+ login
+ transport input none
+!
+!
+end

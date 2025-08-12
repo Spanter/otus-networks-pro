@@ -1,0 +1,150 @@
+Building configuration...
+
+Current configuration : 2462 bytes
+!
+! Last configuration change at 22:58:59 UTC Sun Aug 10 2025
+! NVRAM config last updated at 23:02:14 UTC Sun Aug 10 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R16
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$q75g$2GBQHbZSMuggla7ou.ssx.
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.16 255.255.255.255
+!
+interface Ethernet0/0
+ description R16-to-SW10
+ no ip address
+!
+interface Ethernet0/0.80
+ description Clients_VLAN_80
+ encapsulation dot1Q 80
+ ip address 192.168.80.3 255.255.255.0
+ vrrp 80 ip 192.168.80.1
+ vrrp 80 priority 200
+ vrrp 80 track 1 decrement 50
+!
+interface Ethernet0/0.100
+ description Clients_VLAN_100
+ encapsulation dot1Q 100
+ ip address 192.168.100.3 255.255.255.0
+ vrrp 100 ip 192.168.100.1
+ vrrp 100 priority 250
+ vrrp 100 track 1 decrement 50
+!
+interface Ethernet0/0.199
+ description Management
+ encapsulation dot1Q 199
+ ip address 192.168.199.3 255.255.255.0
+ vrrp 199 ip 192.168.199.1
+ vrrp 199 priority 200
+ vrrp 199 track 1 decrement 50
+!
+interface Ethernet0/1
+ description R16-to-R18
+ ip address 172.20.11.2 255.255.255.252
+!
+interface Ethernet0/2
+ description R16-to-R17
+ ip address 172.20.11.14 255.255.255.252
+ no ip address
+!
+interface Ethernet0/3
+ description R16-to-R32
+ ip address 172.20.11.9 255.255.255.252
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 070C285F4D06
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 104D000A0618
+ login
+ transport input none
+!
+!
+end
