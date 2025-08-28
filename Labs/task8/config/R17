@@ -1,0 +1,198 @@
+Building configuration...
+
+Current configuration : 3177 bytes
+!
+! Last configuration change at 11:14:43 UTC Thu Aug 28 2025
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R17
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$Wi9U$erlRaQe2QIwsq4/itExeU/
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.17 255.255.255.255
+!
+interface Ethernet0/0
+ description R17-to-SW9
+ no ip address
+!
+interface Ethernet0/0.80
+ description Clients_VLAN_80
+ encapsulation dot1Q 80
+ ip address 192.168.80.2 255.255.255.0
+ vrrp 80 ip 192.168.80.1
+ vrrp 80 priority 250
+ vrrp 80 track 1 decrement 50
+!
+interface Ethernet0/0.100
+ description Clients_VLAN_100
+ encapsulation dot1Q 100
+ ip address 192.168.100.2 255.255.255.0
+ vrrp 100 ip 192.168.100.1
+ vrrp 100 priority 200
+ vrrp 100 track 1 decrement 50
+!
+interface Ethernet0/0.199
+ description Management
+ encapsulation dot1Q 199
+ ip address 192.168.199.2 255.255.255.0
+ vrrp 199 ip 192.168.199.1
+ vrrp 199 priority 250
+ vrrp 199 track 1 decrement 50
+!
+interface Ethernet0/1
+ description R17-to-R18
+ ip address 172.20.11.6 255.255.255.252
+!
+interface Ethernet0/2
+ description R17-to-R16
+ ip address 172.20.11.13 255.255.255.252
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+!
+router eigrp SPB
+ !
+ address-family ipv4 unicast autonomous-system 2042
+  !
+  af-interface default
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   summary-address 172.20.11.0 255.255.255.0
+   summary-address 192.168.0.0 255.255.0.0
+   no passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/2
+   summary-address 172.20.11.0 255.255.255.0
+   summary-address 192.168.0.0 255.255.0.0
+   no passive-interface
+  exit-af-interface
+  !
+  topology base
+   redistribute connected
+  exit-af-topology
+  network 10.128.0.17 0.0.0.0
+  network 172.20.11.0 0.0.0.255
+  network 192.168.0.0 0.0.255.255
+  eigrp router-id 10.128.0.17
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 2042
+  !
+  af-interface default
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   no passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/2
+   no passive-interface
+  exit-af-interface
+  !
+  topology base
+   redistribute connected
+  exit-af-topology
+ exit-address-family
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 14141B180F0B
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 14141B180F0B
+ login
+ transport input none
+!
+!
+end
