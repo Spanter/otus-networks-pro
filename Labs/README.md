@@ -8,3 +8,5 @@
 6. [OSPF](task6/)
 7. [IS-IS](task7/)
 8. [EIGRP](task8/)
+9. [eBGP](task9/)
+10. [iBGP](task10/)

@@ -1,0 +1,200 @@
+Building configuration...
+
+Current configuration : 3169 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R12
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$dF1f$skuPndQJ.iZo9aUBP5Leg.
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.12 255.255.255.255
+ ip ospf 1 area 10
+!
+interface Ethernet0/0
+ description R12-to-SW4
+ no ip address
+!
+interface Ethernet0/0.10
+ description Clients_VLAN_10
+ encapsulation dot1Q 10
+ ip address 192.168.10.2 255.255.255.0
+ standby version 2
+ standby 10 ip 192.168.10.1
+ standby 10 priority 250
+ standby 10 preempt
+ standby 10 track 1 decrement 50
+ ip ospf 1 area 10
+!
+interface Ethernet0/0.70
+ description Clients_VLAN_70
+ encapsulation dot1Q 70
+ ip address 192.168.70.2 255.255.255.0
+ standby version 2
+ standby 10 track 1 decrement 50
+ standby 70 ip 192.168.70.1
+ standby 70 priority 200
+ standby 70 preempt
+ standby 70 track 1 decrement 50
+ ip ospf 1 area 10
+!
+interface Ethernet0/0.99
+ description Management
+ encapsulation dot1Q 99
+ ip address 192.168.99.2 255.255.255.0
+ standby version 2
+ standby 10 track 1 decrement 50
+ standby 99 ip 192.168.99.1
+ standby 99 priority 250
+ standby 99 preempt
+ standby 99 track 1 decrement 50
+ ip ospf 1 area 10
+!
+interface Ethernet0/1
+ description R12-to-R13
+ ip address 172.20.10.25 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 10
+!
+interface Ethernet0/1.10
+ description Clients_VLAN_10_BACKUP
+ encapsulation dot1Q 10
+!
+interface Ethernet0/1.70
+ description Clients_VLAN_70_BACKUP
+ encapsulation dot1Q 70
+!
+interface Ethernet0/1.99
+ description Management_BACKUP
+ encapsulation dot1Q 99
+!
+interface Ethernet0/2
+ description R12-to-R14
+ ip address 172.20.10.6 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+!
+interface Ethernet0/3
+ description R12-to-R15
+ ip address 172.20.10.14 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 0
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 10.128.0.12
+ passive-interface default
+ no passive-interface Ethernet0/1
+ no passive-interface Ethernet0/2
+ no passive-interface Ethernet0/3
+ default-information originate
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 00071A150754
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 1511021F0725
+ login
+ transport input none
+!
+!
+end
