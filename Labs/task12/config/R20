@@ -1,0 +1,136 @@
+Building configuration...
+
+Current configuration : 1709 bytes
+!
+! No configuration change since last restart
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R20
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$.07V$yLD2fQyaHeNP1HvYuU2cS.
+!
+no aaa new-model
+clock timezone VLD 10 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.20 255.255.255.255
+ ip ospf 1 area 102
+!
+interface Ethernet0/0
+ description R20-to-R15
+ ip address 172.20.10.22 255.255.255.252
+ ip ospf network point-to-point
+ ip ospf 1 area 102
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+router ospf 1
+ router-id 10.128.0.20
+ area 102 stub
+ passive-interface default
+ no passive-interface Ethernet0/0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 02050D480809
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 05080F1C2243
+ login
+ transport input none
+!
+ntp server 10.128.0.12
+ntp server 10.128.0.13
+!
+end

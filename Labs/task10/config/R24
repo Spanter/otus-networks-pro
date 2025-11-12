@@ -1,0 +1,163 @@
+Building configuration...
+
+Current configuration : 2347 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R24
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$3fIC$PcQoiBLwsho52wgraj7tx0
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.24 255.255.255.255
+!
+interface Ethernet0/0
+ description R24-to-R21
+ ip address 10.10.1.22 255.255.255.252
+!
+interface Ethernet0/1
+ description R24-to-R26
+ ip address 172.20.12.9 255.255.255.252
+ ip router isis TRIADA
+ ipv6 enable
+ ipv6 router isis TRIADA
+ isis network point-to-point
+!
+interface Ethernet0/2
+ description R24-to-R23
+ ip address 172.20.12.2 255.255.255.252
+ ip router isis TRIADA
+ ipv6 enable
+ ipv6 router isis TRIADA
+ isis network point-to-point
+!
+interface Ethernet0/3
+ description R24-to-R18
+ ip address 10.10.1.10 255.255.255.252
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router isis TRIADA
+ net 49.0024.0101.2800.0024.00
+ metric-style wide
+ log-adjacency-changes
+ passive-interface Loopback0
+!
+router bgp 520
+ bgp router-id 10.128.0.24
+ bgp log-neighbor-changes
+ redistribute connected
+ neighbor 10.10.1.9 remote-as 2042
+ neighbor 10.10.1.9 description To-SPB
+ neighbor 10.10.1.21 remote-as 301
+ neighbor 10.10.1.21 description To-Lamas
+ neighbor 10.128.0.23 remote-as 520
+ neighbor 10.128.0.23 update-source Loopback0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 060506324F41
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 104D000A0618
+ login
+ transport input none
+!
+!
+end

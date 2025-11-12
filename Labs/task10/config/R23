@@ -1,0 +1,170 @@
+Building configuration...
+
+Current configuration : 2583 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R23
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$quAz$Z0VMkNCkePI6RKE/Wvni71
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.23 255.255.255.255
+!
+interface Ethernet0/0
+ description R23-to-R22
+ ip address 10.10.1.18 255.255.255.252
+!
+interface Ethernet0/1
+ description R23-to-R25
+ ip address 172.20.12.5 255.255.255.252
+ ip router isis TRIADA
+ ipv6 enable
+ ipv6 router isis TRIADA
+ isis network point-to-point
+!
+interface Ethernet0/2
+ description R23-to-R24
+ ip address 172.20.12.1 255.255.255.252
+ ip router isis TRIADA
+ ipv6 enable
+ ipv6 router isis TRIADA
+ isis network point-to-point
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router isis TRIADA
+ net 49.2222.0101.2800.0023.00
+ metric-style wide
+ log-adjacency-changes
+ passive-interface Loopback0
+!
+router bgp 520
+ bgp router-id 10.128.0.23
+ bgp log-neighbor-changes
+ redistribute connected
+ neighbor 10.128.0.24 remote-as 520
+ neighbor 10.128.0.24 update-source Loopback0
+ neighbor 10.128.0.24 route-reflector-client
+ neighbor 10.128.0.24 next-hop-self
+ neighbor 10.128.0.25 remote-as 520
+ neighbor 10.128.0.25 update-source Loopback0
+ neighbor 10.128.0.25 route-reflector-client
+ neighbor 10.128.0.25 next-hop-self
+ neighbor 10.128.0.26 remote-as 520
+ neighbor 10.128.0.26 update-source Loopback0
+ neighbor 10.128.0.26 route-reflector-client
+ neighbor 10.128.0.26 next-hop-self
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 030752180500
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 121A0C041104
+ login
+ transport input none
+!
+!
+end

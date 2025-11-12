@@ -1,0 +1,190 @@
+Building configuration...
+
+Current configuration : 3123 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R18
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$fyFK$AXKFOHShxdCoT4LwBL5yG0
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.18 255.255.255.255
+!
+interface Ethernet0/0
+ description R18-to-R16
+ ip address 172.20.11.1 255.255.255.252
+!
+interface Ethernet0/1
+ description R18-to-R17
+ ip address 172.20.11.5 255.255.255.252
+!
+interface Ethernet0/2
+ description R18-to-R24
+ ip address 10.10.1.9 255.255.255.252
+!
+interface Ethernet0/3
+ description R18-to-R26
+ ip address 10.10.1.13 255.255.255.252
+!
+!
+router eigrp SPB
+ !
+ address-family ipv4 unicast autonomous-system 2042
+  !
+  af-interface default
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   no passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/0
+   no passive-interface
+  exit-af-interface
+  !
+  topology base
+   redistribute static
+  exit-af-topology
+  network 10.128.0.18 0.0.0.0
+  network 172.20.11.0 0.0.0.3
+  network 172.20.11.4 0.0.0.3
+  eigrp router-id 10.128.0.18
+ exit-address-family
+ !
+ address-family ipv6 unicast autonomous-system 2042
+  !
+  af-interface default
+   passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/0
+   no passive-interface
+  exit-af-interface
+  !
+  af-interface Ethernet0/1
+   no passive-interface
+  exit-af-interface
+  !
+  topology base
+  exit-af-topology
+  eigrp router-id 10.128.0.18
+ exit-address-family
+!
+router bgp 2042
+ bgp router-id 10.128.0.18
+ bgp log-neighbor-changes
+ bgp bestpath as-path multipath-relax
+ network 10.10.1.8 mask 255.255.255.252
+ network 10.10.1.12 mask 255.255.255.252
+ network 10.128.0.18 mask 255.255.255.255
+ redistribute connected
+ redistribute eigrp 2042 route-map EIGRP-TO-BGP
+ neighbor 10.10.1.10 remote-as 520
+ neighbor 10.10.1.10 description To-Triada
+ neighbor 10.10.1.14 remote-as 520
+ neighbor 10.10.1.14 description To-Triada
+ maximum-paths 2
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+ip prefix-list SPB-TO-BGP seq 5 permit 10.128.0.0/24 le 32
+ip prefix-list SPB-TO-BGP seq 10 permit 192.168.80.0/24
+ip prefix-list SPB-TO-BGP seq 15 permit 192.168.100.0/24
+!
+route-map EIGRP-TO-BGP permit 10
+ match ip address prefix-list SPB-TO-BGP
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 05080F1C2243
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 030752180500
+ login
+ transport input none
+!
+!
+end

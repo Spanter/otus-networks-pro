@@ -1,0 +1,164 @@
+Building configuration...
+
+Current configuration : 2401 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R25
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$NTk1$6w2j9s80q9G9nfHu/n3uW.
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.25 255.255.255.255
+!
+interface Ethernet0/0
+ description R25-to-R23
+ ip address 172.20.12.6 255.255.255.252
+ ip router isis TRIADA
+ ipv6 enable
+ ipv6 router isis TRIADA
+ isis network point-to-point
+!
+interface Ethernet0/1
+ description R25-to-R27
+ ip address 10.10.1.25 255.255.255.252
+!
+interface Ethernet0/2
+ description R25-to-R26
+ ip address 172.20.12.13 255.255.255.252
+ ip router isis TRIADA
+ ipv6 enable
+ ipv6 router isis TRIADA
+ isis network point-to-point
+!
+interface Ethernet0/3
+ description R25-to-R28
+ ip address 10.10.1.29 255.255.255.252
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router isis TRIADA
+ net 49.2222.0101.2800.0025.00
+ metric-style wide
+ log-adjacency-changes
+ passive-interface Loopback0
+!
+router bgp 520
+ bgp log-neighbor-changes
+ redistribute connected
+ redistribute static
+ neighbor 10.128.0.23 remote-as 520
+ neighbor 10.128.0.23 update-source Loopback0
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 10.128.0.27 255.255.255.255 Ethernet0/1
+ip route 10.128.0.28 255.255.255.255 Ethernet0/3
+ip route 192.168.30.0 255.255.255.0 10.10.1.30
+ip route 192.168.31.0 255.255.255.0 10.10.1.30
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 01100F175804
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 060506324F41
+ login
+ transport input none
+!
+!
+end
