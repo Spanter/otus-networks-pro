@@ -1,0 +1,240 @@
+Building configuration...
+
+Current configuration : 5083 bytes
+!
+! No configuration change since last restart
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R15
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$zxSo$ba4afaHLeBwFQGmD/gg0o.
+!
+no aaa new-model
+clock timezone VLD 10 0
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.15 255.255.255.255
+ ip ospf 1 area 0
+!
+interface Tunnel99
+ description GRE-R15-to-R18
+ ip address 172.20.99.15 255.255.255.0
+ keepalive 5 3
+ tunnel source 10.10.1.5
+ tunnel destination 10.10.1.9
+!
+interface Tunnel100
+ description DMVPN-HUB-R15
+ ip address 172.20.100.1 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ ip nhrp map multicast dynamic
+ ip nhrp network-id 100
+ ip tcp adjust-mss 1360
+ tunnel source 10.10.1.5
+ tunnel mode gre multipoint
+ tunnel key 100
+!
+interface Ethernet0/0
+ description R15-to-R13
+ ip address 172.20.10.17 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf network point-to-point
+ ip ospf 1 area 10
+!
+interface Ethernet0/1
+ description R15-to-R12
+ ip address 172.20.10.13 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf network point-to-point
+ ip ospf 1 area 10
+!
+interface Ethernet0/2
+ description R15-toR21
+ ip address 10.10.1.150 255.255.255.252 secondary
+ ip address 10.10.1.5 255.255.255.252
+ ip nat outside
+ ip virtual-reassembly in
+ ip ospf 1 area 0
+!
+interface Ethernet0/3
+ description R15-to-R20
+ ip address 172.20.10.21 255.255.255.252
+ ip nat inside
+ ip virtual-reassembly in
+ ip ospf network point-to-point
+ ip ospf 1 area 102
+!
+router ospf 1
+ router-id 10.128.0.15
+ area 102 stub
+ area 102 filter-list prefix OSPF-101 in
+ passive-interface default
+ no passive-interface Ethernet0/0
+ no passive-interface Ethernet0/1
+ no passive-interface Ethernet0/2
+ no passive-interface Ethernet0/3
+ default-information originate
+!
+router bgp 1001
+ bgp router-id 10.128.0.15
+ bgp log-neighbor-changes
+ bgp listen range 172.20.100.0/24 peer-group DMVPN_SPOKES
+ network 10.10.1.4 mask 255.255.255.252
+ network 10.128.0.15 mask 255.255.255.255
+ redistribute connected
+ redistribute ospf 1
+ neighbor DMVPN_SPOKES peer-group
+ neighbor DMVPN_SPOKES remote-as 1001
+ neighbor DMVPN_SPOKES description DMVPN_SPOKES
+ neighbor DMVPN_SPOKES update-source Tunnel100
+ neighbor DMVPN_SPOKES next-hop-self
+ neighbor DMVPN_SPOKES default-originate
+ neighbor DMVPN_SPOKES route-map OSPF_CLIENT_NETS out
+ neighbor 10.10.1.6 remote-as 301
+ neighbor 10.10.1.6 description To_Lamas
+ neighbor 10.10.1.6 route-map PREFER-LAMAS in
+ neighbor 10.10.1.6 route-map FILTER_CLIENT_NETS out
+ neighbor 10.10.1.6 filter-list 1 in
+ neighbor 10.10.1.6 filter-list 1 out
+ neighbor 10.128.0.14 remote-as 1001
+ neighbor 10.128.0.14 description R14
+ neighbor 10.128.0.14 update-source Loopback0
+!
+ip forward-protocol nd
+!
+ip as-path access-list 1 deny _1001_
+ip as-path access-list 1 permit .*
+!
+no ip http server
+no ip http secure-server
+ip nat inside source list 1 interface Ethernet0/2 overload
+ip nat inside source static 172.20.10.22 10.10.1.150
+ip route 192.168.80.0 255.255.255.0 172.20.99.18
+ip route 192.168.100.0 255.255.255.0 172.20.99.18
+!
+!
+ip prefix-list BGP-to-LAMAS seq 5 permit 192.168.10.0/24
+ip prefix-list BGP-to-LAMAS seq 10 permit 192.168.70.0/24
+!
+ip prefix-list CLIENT_NETS seq 10 permit 192.168.10.0/24
+ip prefix-list CLIENT_NETS seq 20 permit 192.168.70.0/24
+ip prefix-list CLIENT_NETS seq 30 permit 192.168.99.0/24
+!
+ip prefix-list OSPF-101 seq 5 deny 10.128.0.19/32
+ip prefix-list OSPF-101 seq 10 permit 0.0.0.0/0 le 32
+!
+ip prefix-list SPOKE_NETS seq 10 permit 192.168.30.0/24
+ip prefix-list SPOKE_NETS seq 20 permit 192.168.31.0/24
+ip prefix-list SPOKE_NETS seq 30 permit 192.168.39.0/24
+!
+route-map FILTER_CLIENT_NETS deny 10
+ match ip address prefix-list CLIENT_NETS SPOKE_NETS
+!
+route-map FILTER_CLIENT_NETS permit 20
+!
+route-map OSPF_CLIENT_NETS permit 10
+ match ip address prefix-list CLIENT_NETS
+!
+route-map OSPF_CLIENT_NETS deny 20
+!
+route-map RM-TO-LAMAS permit 10
+ match ip address prefix-list BGP-to-LAMAS
+!
+route-map PREFER-LAMAS permit 10
+ set local-preference 200
+!
+route-map PREFER-LAMAS permit 20
+!
+!
+access-list 1 deny   172.20.10.22
+access-list 1 permit 192.168.0.0 0.0.255.255
+access-list 1 permit 172.20.10.0 0.0.0.255
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^CC
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 070C285F4D06
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 02050D480809
+ login
+ transport input none
+!
+ntp server 10.128.0.12 prefer
+ntp server 10.128.0.13
+!
+end

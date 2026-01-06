@@ -1,0 +1,154 @@
+Building configuration...
+
+Current configuration : 2177 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R22
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$Gn.v$/1YFu7hFY/RvIkUQ8gBKP/
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.22 255.255.255.255
+!
+interface Ethernet0/0
+ description R22-to-R4
+ ip address 10.10.1.2 255.255.255.252
+!
+interface Ethernet0/1
+ description R22-to-R21
+ ip address 10.10.1.37 255.255.255.252
+!
+interface Ethernet0/2
+ description R22-to-R23
+ ip address 10.10.1.17 255.255.255.252
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router bgp 101
+ bgp router-id 10.128.0.22
+ bgp log-neighbor-changes
+ network 10.10.1.0 mask 255.255.255.252
+ network 10.10.1.36 mask 255.255.255.252
+ network 10.128.0.22 mask 255.255.255.255
+ redistribute connected
+ neighbor 10.10.1.1 remote-as 1001
+ neighbor 10.10.1.1 description To-Moscow
+ neighbor 10.10.1.1 default-originate
+ neighbor 10.10.1.1 prefix-list ONLY-DEF out
+ neighbor 10.10.1.38 remote-as 301
+ neighbor 10.10.1.38 description To-Lamas
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+ip prefix-list ONLY-DEF seq 10 permit 0.0.0.0/0
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 045802150C2E
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 14141B180F0B
+ login
+ transport input none
+!
+!
+end
