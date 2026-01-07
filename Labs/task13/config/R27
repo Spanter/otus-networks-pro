@@ -1,0 +1,161 @@
+Building configuration...
+
+Current configuration : 2210 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R27
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$JCkt$GudYkeMssSAJbIZxPtsY5/
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.27 255.255.255.255
+!
+interface Tunnel100
+ description DMVPN-SPOKE-R27
+ ip address 172.20.100.27 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ ip nhrp map 172.20.100.1 10.10.1.5
+ ip nhrp map multicast 10.10.1.5
+ ip nhrp network-id 100
+ ip nhrp nhs 172.20.100.1
+ ip tcp adjust-mss 1360
+ tunnel source 10.10.1.26
+ tunnel mode gre multipoint
+ tunnel key 100
+!
+interface Ethernet0/0
+ description R27-to-R25
+ ip address 10.10.1.26 255.255.255.252
+!
+interface Ethernet0/1
+ no ip address
+ shutdown
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router bgp 1001
+ bgp router-id 10.128.0.27
+ bgp log-neighbor-changes
+ network 10.128.0.27 mask 255.255.255.255
+ neighbor 172.20.100.1 remote-as 1001
+ neighbor 172.20.100.1 description HUB-R15
+ neighbor 172.20.100.1 update-source Tunnel100
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 10.10.1.25
+!
+!
+!
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 05080F1C2243
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 030752180500
+ login
+ transport input none
+!
+!
+end

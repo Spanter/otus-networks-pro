@@ -1,0 +1,243 @@
+Building configuration...
+
+Current configuration : 4632 bytes
+!
+version 15.4
+service timestamps debug datetime msec
+service timestamps log datetime msec
+service password-encryption
+!
+hostname R28
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$1we9$fOIDLQG8iJYZHY1iIOyX40
+!
+no aaa new-model
+mmi polling-interval 60
+no mmi auto-configure
+no mmi pvc
+mmi snmp-timeout 180
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+ip dhcp pool VLAN30
+ network 192.168.30.0 255.255.255.0
+ domain-name chokurdakh.com
+ default-router 192.168.30.1
+!
+ip dhcp pool VLAN 31
+ network 192.168.31.0 255.255.255.0
+ domain-name chokurdakh.com
+ default-router 192.168.31.1
+!
+!
+!
+no ip domain lookup
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+!
+!
+!
+!
+!
+redundancy
+!
+!
+track 10 ip sla 10 reachability
+ delay down 10 up 5
+!
+track 20 ip sla 20 reachability
+ delay down 10 up 5
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ ip address 10.128.0.28 255.255.255.255
+!
+interface Tunnel100
+ description DMVPN-SPOKE-R28
+ ip address 172.20.100.28 255.255.255.0
+ no ip redirects
+ ip mtu 1400
+ ip nhrp map 172.20.100.1 10.10.1.5
+ ip nhrp map multicast 10.10.1.5
+ ip nhrp network-id 100
+ ip nhrp nhs 172.20.100.1
+ ip tcp adjust-mss 1360
+ tunnel source 10.10.1.34
+ tunnel mode gre multipoint
+ tunnel key 100
+!
+interface Ethernet0/0
+ description R28-to-R26
+ ip address 10.10.1.34 255.255.255.252
+ ip nat outside
+ ip virtual-reassembly in
+!
+interface Ethernet0/1
+ description R28-to-R25
+ ip address 10.10.1.30 255.255.255.252
+ ip nat outside
+ ip virtual-reassembly in
+!
+interface Ethernet0/2
+ no ip address
+!
+interface Ethernet0/2.30
+ description Clients1
+ encapsulation dot1Q 30
+ ip address 192.168.30.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly in
+!
+interface Ethernet0/2.31
+ description Clients2
+ encapsulation dot1Q 31
+ ip address 192.168.31.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly in
+!
+interface Ethernet0/2.39
+ description Management
+ encapsulation dot1Q 39
+ ip address 192.168.39.1 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly in
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+interface Ethernet1/0
+ no ip address
+ shutdown
+!
+interface Ethernet1/1
+ no ip address
+ shutdown
+!
+interface Ethernet1/2
+ no ip address
+ shutdown
+!
+interface Ethernet1/3
+ no ip address
+ shutdown
+!
+router bgp 1001
+ bgp router-id 10.128.0.28
+ bgp log-neighbor-changes
+ network 10.128.0.28 mask 255.255.255.255
+ network 192.168.30.0
+ network 192.168.31.0
+ network 192.168.39.0
+ neighbor 172.20.100.1 remote-as 1001
+ neighbor 172.20.100.1 description HUB-R15
+ neighbor 172.20.100.1 update-source Tunnel100
+ maximum-paths ibgp 2
+!
+ip forward-protocol nd
+!
+!
+no ip http server
+no ip http secure-server
+ip nat inside source static network 192.168.30.0 10.10.2.0 /24
+ip nat inside source static network 192.168.31.0 10.10.3.0 /24
+ip route 0.0.0.0 0.0.0.0 10.10.1.29 name ISP-to-R25 track 10
+ip route 0.0.0.0 0.0.0.0 10.10.1.33 200 name ISP-to-R26
+!
+ip access-list extended ACL-VLAN30
+ permit ip 192.168.30.0 0.0.0.255 any
+ip access-list extended ACL-VLAN31
+ permit ip 192.168.31.0 0.0.0.255 any
+ip access-list extended ACL-VLAN39
+ permit ip 192.168.39.0 0.0.0.255 any
+ip access-list extended ACL_TO_HUB
+ permit ip 192.168.30.0 0.0.0.255 192.168.0.0 0.0.255.255
+ permit ip 192.168.31.0 0.0.0.255 192.168.0.0 0.0.255.255
+ permit ip 192.168.39.0 0.0.0.255 192.168.0.0 0.0.255.255
+!
+ip sla 10
+ icmp-echo 10.10.1.29 source-interface Ethernet0/1
+ frequency 5
+ip sla schedule 10 life forever start-time now
+ip sla 20
+ icmp-echo 10.10.1.33 source-interface Ethernet0/0
+ frequency 5
+ip sla schedule 20 life forever start-time now
+!
+route-map BALANCE permit 5
+ match ip address ACL_TO_HUB
+ set interface Tunnel100
+!
+route-map PBR-CHOKURDAKH permit 10
+ match ip address ACL-VLAN30
+ set ip next-hop verify-availability 10.10.1.29 1 track 10
+ set ip next-hop verify-availability 10.10.1.33 2 track 20
+!
+route-map PBR-CHOKURDAKH permit 20
+ match ip address ACL-VLAN31
+ set ip next-hop verify-availability 10.10.1.33 1 track 20
+ set ip next-hop verify-availability 10.10.1.29 2 track 10
+!
+!
+access-list 30 permit 192.168.30.0 0.0.0.255
+access-list 31 permit 192.168.31.0 0.0.0.255
+!
+control-plane
+!
+!
+!
+!
+!
+!
+!
+banner motd ^C
+*********************************************************************
+*                                                                   *
+*   Attention! Unauthorized access to the equipment is forbidden!   *
+*                                                                   *
+*********************************************************************
+^C
+!
+line con 0
+ password 7 060506324F41
+ logging synchronous
+ login
+line aux 0
+line vty 0 4
+ password 7 05080F1C2243
+ login
+ transport input none
+!
+!
+end
